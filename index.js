@@ -18,6 +18,24 @@ app.get('/', (req,res) => {
   //send es un metodo de responde
 });
 
+//creamos otra ruta
+
+app.get('/nueva-ruta', (req,res) => {
+  res.send('This is a new Route whit express');
+})
+
+//creemos otra ruta mas, tambien podemos enviar mediante el rsponse un objeto json, esto sera
+//lo que mas enviaremos ya que crearemos un Api para comunicar datos al frontend.
+
+app.get('/products', (req,res) => {
+  res.json({
+    name: 'product 1',
+    price: 1000,
+  })
+})
+
+
+
 //ahora para que todo esto funcione le decimos a express en que puerto escuchar, podemos pasar
 //un segundo argumento al metodo listen que sea un callback en este caso nos devulve un console.log
 //para saber que se esta ejecutando, recordemos que esto es para produccion en desarrollo no deben haber console.log s
