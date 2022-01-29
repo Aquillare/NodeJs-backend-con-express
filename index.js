@@ -22,7 +22,7 @@ app.use(express.json());
 
 //incializamos una variable con el puerto donde queremos que corra nuestra aPP
 //si hay una avriable de entorno para el puerto la tomara, si no usara el puerto 3000.
-const puerto = procces.env.PORT ||3000;
+const puerto = process.env.PORT ||3000;
 
 
 
