@@ -62,7 +62,7 @@ async (req,res,next) => {
 
 router.delete('/:id',
 validatorHandler(getUserSchema, 'params'),
-(req,res,next) => {
+async (req,res,next) => {
   try{
     const {id} = req.params;
     await service.delete(id);
