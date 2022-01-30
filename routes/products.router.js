@@ -10,7 +10,7 @@ const {createProductSchema, updateProductSchema, getProductSchema} = require('..
 const router = express.Router();
 
 //creamos una instancia de la clase ProductService
-const service = new ProductService;
+const service = new ProductService();
 
 
 

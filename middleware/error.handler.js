@@ -5,7 +5,7 @@ function logErrors(err, req, res, next){
     next(err);
 }
 
-//declaramos otro middleware de error, este recibira el error y le dara formate para enviarlo al cliente.
+//declaramos otro middleware de error, este recibira el error y le dara formato para enviarlo al cliente.
 
 function errorHandler (err, req, res, next){  //es importante colocar siempre el next entre los parametros cuando es un
                                              //un middleware de error, asi no usemos el next en el cuerpo.

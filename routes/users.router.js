@@ -1,29 +1,77 @@
 const express = require('express');
+const userService = require('../services/user.service');
+
+//importamos middleware de validacion de informacion y schemas
+const validatorHandler = require('../middleware/validator.handler');
+const {createUserSchema, updateUserSchema, getUserSchema} = require('../schemas/user.schema');
 
 //creamos una variable router que contenga el metodo Router de expressç
 const router = express.Router();
 
+//creamos una instancia de userService
+const service = new userService();
 
 
-//veamos como recoger parametros query
-//el parametro es opcional por lo que no vendra definido directamente en la ruta.ç
-
-router.get('/users', (req, res) => {
-
-  //los paramaetros query los recibimos mediante la propiedad .query de request
-  const { limit , offset } = req.query;
-
-  //establecemos un condicional para evaluar si estan presentes los valores limit y offset
-  if(limit && offset){
-    res.json({
-      limit,
-      offset
-    });
-  } else {
-    res.send('No hay parametros');
-  }
-
-
+router.get('/', async (req, res, next) => {
+  try{
+     const categories = await service.find();
+     res.json(categories);
+    } catch(err) {
+      next(err);
+    }
 });
+
+
+router.get('/:id',
+ validatorHandler(getUserSchema, 'params'),
+ async (req,res,next) => {
+  try{
+    const {id} = req.params;
+    const category = await service.findOne(id);
+    res.json(category);
+  }catch(err){
+    next(err);
+  }
+});
+
+router.post('/',
+ validatorHandler(createUserSchema, 'body'),
+ async (req,res,next)=> {
+  try{
+    const body = req.body;
+    const newCategory = await service.create(body);
+    res.status(201).json(newCategory);
+  } catch(err){
+    next(err);
+  };
+});
+
+router.patch('/:id',
+validatorHandler(getUserSchema, 'params'),
+validatorHandler(updateUserSchema, 'body'),
+async (req,res,next) => {
+  try {
+    const {id} = req.params;
+    const body = req.body;
+    const category = await service.update(id, body);
+    res.json(category);
+  } catch (err) {
+    next(err);
+  };
+});
+
+router.delete('/:id',
+validatorHandler(getUserSchema, 'params'),
+(req,res,next) => {
+  try{
+    const {id} = req.params;
+    await service.delete(id);
+    res.status(201).json({id})
+  } catch(err) {
+    next(err);
+  }
+});
+
+
 
 module.exports = router;

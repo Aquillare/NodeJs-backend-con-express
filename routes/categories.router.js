@@ -1,20 +1,74 @@
 const express = require('express');
+const categoryService = require('../services/category.service');
 
 //creamos una variable router que contenga el metodo Router de express
 const router = express.Router();
 
-//En este ejemplo queremos un endpoint de categorias que nos retorne de los productos de esa categoria,
-//un producto en especifico.
+//importamos el middleware de validacion de informacion y el schema
+const validatorHandler = require('../middleware/validator.handler');
+const { createCategorySchema, updateCategorySchema, getCategorySchema} = require('../schemas/category.schema');
 
-router.get('/:categoryId/products/:productId', (req,res) => {
 
-  const {categoryId, productId} = req.params;
+//creamos una instancia de la calse categoryService
+const service = new categoryService();
 
-  res.json({
-    categoryId,
-    productId
-  });
+router.get('/', async (req,res,next) => {
+  try{
+    const categories = await service.find();
+    res.json(categories);
+  }catch (err) {
+    next(err);
+  }
+});
 
+router.get('/:id',
+validatorHandler(getCategorySchema, 'params'),
+async (req,res,next) => {
+  try{
+    const {id} = req.params;
+    const category = await service.findOne(id);
+    res.json(category);
+  } catch (err){
+    next(err);
+  }
+});
+
+router.post('/',
+validatorHandler(createCategorySchema, 'body'),
+async(req,res,next) => {
+  try{
+    const body = req.body;
+    const newCategory = await service.create(body);
+    res.status(201).json(newCategory);
+  } catch(err) {
+    next(err);
+  }
+});
+
+router.patch('/:id',
+validatorHandler(getCategorySchema, 'params'),
+validatorHandler(updateCategorySchema, 'body'),
+async (req,res,next) => {
+  try{
+    const {id} = req.params;
+    const body = req.body;
+    const category = await service.update(id, body);
+    res.json(category);
+  } catch(err) {
+    next(err);
+  }
+});
+
+router.delete('/:id',
+validatorHandler(getCategorySchema, 'params'),
+async(req,res,next) => {
+  try{
+    const {id} = req.params;
+    await service.delete(id);
+    res.status(201).json({id});
+  } catch(err) {
+    next(err);
+  }
 });
 
 module.exports = router;
